@@ -1,7 +1,4 @@
-const library = [
-    {author: "J.K. Rowling", title: "Harry Potter and The Sorcerer's Stone", pages: 223, read: "Haven't read it"},
-    {author: "George R.R. Martin", title: "A Game of Thrones", pages: "694", read: "Haven't read it"},
-];
+const library = [];
 const table = document.querySelector("table");
 updateBooks();
 
