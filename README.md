@@ -12,4 +12,4 @@ You can edit the title, author and page information of the books in your library
 
 ## Live Demo
 
-You can find a live demo for the app on my github page [here](https://deshawnn.github.io/odin-library/);
+You can find a live demo for the app on my github page [here](https://deshawnn.github.io/odin-library/)
