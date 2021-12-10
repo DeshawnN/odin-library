@@ -15,6 +15,10 @@ function Book(author, title, pages, read) {
     }
 }
 
+Book.prototype.changeReadStatus = function() {
+    this.read = (this.read.toLowerCase() === "read it") ? "Haven't read it" : "Read it";
+}
+
 function addBookToLibrary() {
     book = promptForBook();
     library.push(book);
@@ -74,8 +78,7 @@ function updateBooks() {
 
         const readStatusButton = createElementWithTextContent("button", "Change Read Status");
         readStatusButton.addEventListener('click', () => {
-            let readStatus = library[index].read;
-            library[index].read = (readStatus.toLowerCase() === "haven't read it") ? "Read it" : "Haven't read it" 
+            library[index].changeReadStatus();
             updateBooks();
         })
 
