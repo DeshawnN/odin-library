@@ -48,27 +48,16 @@ function updateBooks() {
         div.classList.add("book");
 
         const titleDiv = createElementWithTextContent("div", book.title);
-        titleDiv.addEventListener('click', () => {
-            changeBookProperty("title", titleDiv.textContent, index);
-        })
+        titleDiv.setAttribute('data-title', '');
 
         const authorDiv = createElementWithTextContent("div", `by ${book.author}`);
-        authorDiv.addEventListener('click', () => {
-            const authorName = authorDiv.textContent.slice(3);
-            changeBookProperty("author", authorName, index);
-        })
+        authorDiv.setAttribute('data-author', '');
 
         const pagesDiv = createElementWithTextContent("div", `${book.pages} pages`);
-        pagesDiv.addEventListener('click', () => {
-            const pages = pagesDiv.textContent.split(" ")[0];
-            changeBookProperty("pages", +pages, index);
-        });
+        pagesDiv.setAttribute('data-pages', '');
+
         const readDiv = createElementWithTextContent("div", book.read);
         readDiv.setAttribute("data-read", '');
-
-        readDiv.addEventListener('click', () => {
-            
-        })
 
         const deleteButton = createElementWithTextContent("button", "Remove Book");
         deleteButton.addEventListener('click', () => {
@@ -92,6 +81,11 @@ function updateBooks() {
         buttons.appendChild(readStatusButton);
 
         div.appendChild(buttons)
+
+        const elements = [...div.querySelectorAll("div")];
+        elements.forEach(element => {
+            setEventListener(element, index);
+        });
         container.appendChild(div);
     })
 }
@@ -109,4 +103,30 @@ function changeBookProperty(property, currentValue, index) {
     library[index][property] = (newValue != null) ? newValue : currentValue;
 
     updateBooks();
-} 
+}
+
+function setEventListener(node, index) {
+    let dataAttribute = node.getAttributeNames()
+    .filter(elem => elem.startsWith("data"))[0];
+    if (!dataAttribute || dataAttribute.includes("read")) return;
+
+    dataAttribute = dataAttribute.split("-")[1];
+    
+    node.addEventListener('click', () => {
+        switch(dataAttribute) {
+            case "title":
+                changeBookProperty(dataAttribute, node.textContent, index);
+                break;
+            case "author":
+                const author = node.textContent.slice(3);
+                changeBookProperty(dataAttribute, author, index);
+                break;
+            case "pages":
+                const pages = node.textContent.split(" ")[0];
+                changeBookProperty(dataAttribute, +pages, index);
+                break;
+            default:
+                return;
+        }
+    })
+}
