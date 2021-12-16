@@ -1,22 +1,40 @@
 const library = [];
 const table = document.querySelector("table");
+
+const ReadStatus = {
+    READ: "READ",
+    UNREAD: "UNREAD"
+}
 updateBooks();
 
-function Book(author, title, pages, read) {
-    this.author = author;
-    this.title = title;
-    this.pages = pages;
+// function Book(author, title, pages, read) {
+//     this.author = author;
+//     this.title = title;
+//     this.pages = pages;
 
-    read = read.toLowerCase();
-    if (read === "yes") {
-        this.read = "Read it";
-    } else if (read === "no") {
-        this.read = "Haven't read it";
+//     read = read.toLowerCase();
+//     if (read === "yes") {
+//         this.read = "Read it";
+//     } else if (read === "no") {
+//         this.read = "Haven't read it";
+//     }
+// }
+
+// Book.prototype.changeReadStatus = function() {
+//     this.read = (this.read.toLowerCase() === "read it") ? "Haven't read it" : "Read it";
+// }
+
+class Book {
+    constructor(author, title, pages, read) {
+        this.author = author;
+        this.title = title;
+        this.pages = pages; 
+        this.read = (read.toLowerCase() === "read") ? ReadStatus.READ : ReadStatus.UNREAD;
     }
-}
 
-Book.prototype.changeReadStatus = function() {
-    this.read = (this.read.toLowerCase() === "read it") ? "Haven't read it" : "Read it";
+    changeReadStatus() {
+        this.read = (this.read === ReadStatus.READ) ? ReadStatus.UNREAD : ReadStatus.READ;
+    }
 }
 
 function addBookToLibrary() {
@@ -29,7 +47,7 @@ function promptForBook() {
     const author = prompt("Author", "George R.R. Martin");
     const title = prompt("Title", "A Game of Thrones");
     const pages = prompt("pages", 694);
-    const read = prompt("Read?", "no");
+    const read = prompt("Read Status: (read/unread)", "read");
 
     return new Book(author, title, pages, read);
 }
