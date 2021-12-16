@@ -1,18 +1,16 @@
-const library = [];
 const table = document.querySelector("table");
 
 const ReadStatus = {
     READ: "READ",
     UNREAD: "UNREAD"
 }
-updateBooks();
 
 class Book {
-    constructor(author, title, pages, read) {
+    constructor(title, author, pages, read) {
         this.author = author;
         this.title = title;
         this.pages = pages; 
-        this.read = (read.toLowerCase() === "read") ? ReadStatus.READ : ReadStatus.UNREAD;
+        this.read = (read) ? ReadStatus.READ : ReadStatus.UNREAD;
     }
 
     changeReadStatus() {
@@ -20,75 +18,121 @@ class Book {
     }
 }
 
-function addBookToLibrary() {
-    book = promptForBook();
-    library.push(book);
-    updateBooks();
+class Library {
+    #books = [
+        new Book("War and Peace", "Leo Tolstoy", 1225, false),
+        new Book("Dungeons and Dragons 5E Player Handbook", "Wizards of the Coast", 320, false),
+        new Book("Harry Potter and the Deathly Hallows", "J.K. Rowling", 607, false)
+    ];
+
+    add(book) {
+        this.#books.push(book);
+    }
+
+    get books() {
+        return this.#books;
+    }
+
+    render() {
+        const container = document.querySelector(".container");
+        container.innerHTML = "";
+
+        this.books.forEach((book, index) => {
+            const div = document.createElement("div");
+            div.classList.add("book");
+
+            const entry = {
+                titleDiv: createElementWithTextContent("div", book.title),
+                authorDiv: createElementWithTextContent('div', book.author),
+                pagesDiv: createElementWithTextContent('div', book.pages),
+                readDiv: createElementWithTextContent('div', book.read),
+                deleteButton: createElementWithTextContent("button", "Remove Book"),
+                readStatusButton: createElementWithTextContent("button", "Change Read Status")
+            };
+
+            formatElements(entry);
+            setDataAttributes(entry);
+
+            entry.deleteButton.addEventListener('click', () => {
+                this.#books.splice(index, 1);
+                this.render();
+            })
+
+            entry.readStatusButton.addEventListener('click', () => {
+                this.#books[index].changeReadStatus();
+                this.render();
+            })
+
+            div.appendChild(entry.titleDiv);
+            div.appendChild(entry.authorDiv);
+            div.appendChild(entry.pagesDiv);
+            div.appendChild(entry.readDiv);
+
+            const buttons = document.createElement("div");
+
+            buttons.appendChild(entry.deleteButton);
+            buttons.appendChild(entry.readStatusButton);
+
+            div.appendChild(buttons)
+
+            const elements = [...div.querySelectorAll("div")];
+            elements.forEach(element => {
+                setEventListener(element, index);
+            });
+
+            container.appendChild(div);
+        })
+    }
 }
 
-function promptForBook() {
-    const author = prompt("Author", "George R.R. Martin");
-    const title = prompt("Title", "A Game of Thrones");
-    const pages = prompt("pages", 694);
-    const read = prompt("Read Status: (read/unread)", "read");
+const library = new Library();
+library.render();
 
-    return new Book(author, title, pages, read);
-}
-
-const addButton = document.querySelector('[data-add-button]');
+const addButton = document.querySelector("[data-add-button]")
 addButton.addEventListener('click', () => {
-    addBookToLibrary();
-})
+    const { title, author, pages, read } = getBookInfo();
+    library.add(new Book(title, author, pages, read));
+    library.render();
+    clearInput();
+});
 
-function updateBooks() {
-    const container = document.querySelector(".container");
-    container.innerHTML = "";
+const inputs = document.querySelectorAll('.input-area input');
 
-    library.forEach((book, index) => {
-        const div = document.createElement("div");
-        div.classList.add("book");
+function getBookInfo() {
+    let [title, author, pages, read] = inputs;
+    
+    title = title.value
+    author = author.value;
+    pages = pages.value;
+    read = read.checked;
+    
+    return { 
+        title, 
+        author,
+        pages,
+        read
+    }
+}
 
-        const titleDiv = createElementWithTextContent("div", book.title);
-        titleDiv.setAttribute('data-title', '');
+function clearInput() {
+    let [title, author, pages, read] = inputs;
 
-        const authorDiv = createElementWithTextContent("div", `by ${book.author}`);
-        authorDiv.setAttribute('data-author', '');
+    title.value = '';
+    author.value = '';
+    pages.value = '';
+    read.checked = false; 
+}
 
-        const pagesDiv = createElementWithTextContent("div", `${book.pages} pages`);
-        pagesDiv.setAttribute('data-pages', '');
+function setDataAttributes(obj) {
+    obj.titleDiv.setAttribute('data-title', '');
+    obj.authorDiv.setAttribute('data-author', '');
+    obj.pagesDiv.setAttribute('data-pages', '');
+    obj.readDiv.setAttribute('data-read', '');
+}
 
-        const readDiv = createElementWithTextContent("div", book.read);
-        readDiv.setAttribute("data-read", '');
-
-        const deleteButton = createElementWithTextContent("button", "Remove Book");
-        deleteButton.addEventListener('click', () => {
-            library.splice(index, 1);
-            updateBooks();
-        })
-
-        const readStatusButton = createElementWithTextContent("button", "Change Read Status");
-        readStatusButton.addEventListener('click', () => {
-            library[index].changeReadStatus();
-            updateBooks();
-        })
-
-        div.appendChild(titleDiv);
-        div.appendChild(authorDiv);
-        div.appendChild(pagesDiv);
-        div.appendChild(readDiv);
-
-        const buttons = document.createElement("div");
-        buttons.appendChild(deleteButton);
-        buttons.appendChild(readStatusButton);
-
-        div.appendChild(buttons)
-
-        const elements = [...div.querySelectorAll("div")];
-        elements.forEach(element => {
-            setEventListener(element, index);
-        });
-        container.appendChild(div);
-    })
+function formatElements(obj) {
+    obj.authorDiv.textContent = `By ${obj.authorDiv.textContent}`;
+    obj.pagesDiv.textContent = `${obj.pagesDiv.textContent} pages`;
 }
 
 function createElementWithTextContent(tagName, text) {
@@ -101,9 +145,9 @@ function createElementWithTextContent(tagName, text) {
 function changeBookProperty(property, currentValue, index) {
     const newValue = prompt(`Enter new ${property}`, currentValue);
 
-    library[index][property] = (newValue != null) ? newValue : currentValue;
+    library.books[index][property] = (newValue != null) ? newValue : currentValue;
 
-    updateBooks();
+    library.render();
 }
 
 function setEventListener(node, index) {
@@ -120,6 +164,7 @@ function setEventListener(node, index) {
                 break;
             case "author":
                 const author = node.textContent.slice(3);
+                console.log(author);
                 changeBookProperty(dataAttribute, author, index);
                 break;
             case "pages":
