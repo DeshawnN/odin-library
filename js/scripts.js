@@ -7,23 +7,6 @@ const ReadStatus = {
 }
 updateBooks();
 
-// function Book(author, title, pages, read) {
-//     this.author = author;
-//     this.title = title;
-//     this.pages = pages;
-
-//     read = read.toLowerCase();
-//     if (read === "yes") {
-//         this.read = "Read it";
-//     } else if (read === "no") {
-//         this.read = "Haven't read it";
-//     }
-// }
-
-// Book.prototype.changeReadStatus = function() {
-//     this.read = (this.read.toLowerCase() === "read it") ? "Haven't read it" : "Read it";
-// }
-
 class Book {
     constructor(author, title, pages, read) {
         this.author = author;
