@@ -9,7 +9,7 @@
         <h1>Library</h1>
         <p><strong>Note</strong>: You can edit book info fields by clicking on them</p>
 
-        <div class="input">
+        <!-- <div class="input">
             <div class="input-area">
                 <label for="title">Title</label>
                 <input type="text" id="title">
@@ -27,7 +27,29 @@
                 <input type="checkbox" id="read">
             </div>
             <button data-add-button>Add New Book</button>
-        </div>
+        </div> -->
+        <form>
+            <label>
+                Title
+                <input type="text" id="title" required>
+            </label>
+            <label>
+                Author
+                <input type="text" id="author" required>
+            </label>
+            <label>
+                Pages
+                <input type="number" id="pages" required min="1" value="1">
+            </label>
+            <label>
+                Read Status
+                <select>
+                    <option>Unread</option>
+                    <option>Read</option>
+                </select>
+            </label>
+            <button type="submit" data-add-button>Add Book</button>
+        </form>
 
         <div class="container">
             

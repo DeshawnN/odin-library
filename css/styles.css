@@ -17,12 +17,12 @@
     justify-content:center;
 }
 
-.input-area {
-    display: flex;
-    margin: 5px 0;
+form label {
+    display: block;
+    padding: 10px 0;
+    box-sizing: border-box;
 }
 
-.input-area label {
-    margin: 5px 10px;
-    min-width: 50px;
+input:invalid {
+    border: 1px dashed red;
 }

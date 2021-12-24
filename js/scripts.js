@@ -1,8 +1,8 @@
 const table = document.querySelector("table");
 
 const ReadStatus = {
-    READ: "READ",
-    UNREAD: "UNREAD"
+    READ: "Read",
+    UNREAD: "Unread"
 }
 
 class Book {
@@ -10,7 +10,7 @@ class Book {
         this.author = author;
         this.title = title;
         this.pages = pages; 
-        this.read = (read) ? ReadStatus.READ : ReadStatus.UNREAD;
+        this.read = (read === 'Read') ? ReadStatus.READ : ReadStatus.UNREAD;
     }
 
     changeReadStatus() {
@@ -88,15 +88,27 @@ class Library {
 const library = new Library();
 library.render();
 
-const addButton = document.querySelector("[data-add-button]")
-addButton.addEventListener('click', () => {
-    const { title, author, pages, read } = getBookInfo();
-    library.add(new Book(title, author, pages, read));
+const addButton = document.querySelector("[data-add-button]");
+addButton.addEventListener('click', (event) => {
+    const bookInfo = getBookInfo();
+    if (!validateBook(bookInfo)) {
+        return;
+    }
+    library.add(new Book(bookInfo.title, bookInfo.author, bookInfo.pages, bookInfo.read));
     library.render();
     clearInput();
 });
 
-const inputs = document.querySelectorAll('.input-area input');
+function validateBook(book) {
+    for (const prop in book) {
+        if (book[prop] == false) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const inputs = document.querySelectorAll('form label > *');
 
 function getBookInfo() {
     let [title, author, pages, read] = inputs;
@@ -104,7 +116,7 @@ function getBookInfo() {
     title = title.value
     author = author.value;
     pages = pages.value;
-    read = read.checked;
+    read = read.value;
     
     return { 
         title, 
@@ -119,8 +131,8 @@ function clearInput() {
 
     title.value = '';
     author.value = '';
-    pages.value = '';
-    read.checked = false; 
+    pages.value = 1;
+    read.value = 'Unread'; 
 }
 
 function setDataAttributes(obj) {
